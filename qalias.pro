@@ -4,15 +4,16 @@ requires(qtConfig(filedialog))
 HEADERS       = mainwindow.h \
                 highlighter.h \
                 codeeditor.h \
-                mymdichild.h
+                mdichild.h
 SOURCES       = main.cpp \
                 mainwindow.cpp \
                 highlighter.cpp \
                 codeeditor.cpp \
-                mymdichild.cpp
-RESOURCES     = mdi.qrc
+                mdichild.cpp
+RESOURCES     = qalias.qrc
 
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/widgets/mainwindows/mdi
+# target.path = $$[QT_INSTALL_EXAMPLES]/widgets/mainwindows/mdi
+target.path = .
 INSTALLS += target
 CONFIG += console

@@ -1,7 +1,7 @@
 #include <QtWidgets>
 
 #include "mainwindow.h"
-#include "mymdichild.h"
+#include "mdichild.h"
 
 MainWindow::MainWindow()
     : mdiArea(new QMdiArea)
@@ -18,7 +18,7 @@ MainWindow::MainWindow()
 
     readSettings();
 
-    setWindowTitle(tr("MDI"));
+    setWindowTitle(tr("QAlias"));
     setUnifiedTitleAndToolBarOnMac(true);
 }
 
@@ -35,7 +35,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::newFile()
 {
-    MyMdiChild *child = createMdiChild();
+    MdiChild *child = createMdiChild();
     child->newFile();
     child->show();
 }
@@ -61,7 +61,7 @@ bool MainWindow::openFile(const QString &fileName)
 
 bool MainWindow::loadFile(const QString &fileName)
 {
-    MyMdiChild *child = createMdiChild();
+    MdiChild *child = createMdiChild();
     const bool succeeded = child->loadFile(fileName);
     if (succeeded)
         child->show();
@@ -156,7 +156,7 @@ void MainWindow::save()
 
 void MainWindow::saveAs()
 {
-    MyMdiChild *child = activeMdiChild();
+    MdiChild *child = activeMdiChild();
     if (child && child->saveAs()) {
         statusBar()->showMessage(tr("File saved"), 2000);
         MainWindow::prependToRecentFiles(child->currentFile());
@@ -185,9 +185,8 @@ void MainWindow::paste()
 
 void MainWindow::about()
 {
-   QMessageBox::about(this, tr("About MDI"),
-            tr("The <b>MDI</b> example demonstrates how to write multiple "
-               "document interface applications using Qt."));
+   QMessageBox::about(this, tr("About QAlias"),
+            tr("The IDE for Alias programming language."));
 }
 
 void MainWindow::updateMenus()
@@ -232,7 +231,7 @@ void MainWindow::updateWindowMenu()
 
     for (int i = 0; i < windows.size(); ++i) {
         QMdiSubWindow *mdiSubWindow = windows.at(i);
-        MyMdiChild *child = qobject_cast<MyMdiChild *>(mdiSubWindow->widget());
+        MdiChild *child = qobject_cast<MdiChild *>(mdiSubWindow->widget());
 
         QString text;
         if (i < 9) {
@@ -250,9 +249,9 @@ void MainWindow::updateWindowMenu()
     }
 }
 
-MyMdiChild *MainWindow::createMdiChild()
+MdiChild *MainWindow::createMdiChild()
 {
-    MyMdiChild *child = new MyMdiChild;
+    MdiChild *child = new MdiChild;
     mdiArea->addSubWindow(child);
 
 #ifndef QT_NO_CLIPBOARD
@@ -427,10 +426,10 @@ void MainWindow::writeSettings()
     settings.setValue("geometry", saveGeometry());
 }
 
-MyMdiChild *MainWindow::activeMdiChild() const
+MdiChild *MainWindow::activeMdiChild() const
 {
     if (QMdiSubWindow *activeSubWindow = mdiArea->activeSubWindow())
-        return qobject_cast<MyMdiChild *>(activeSubWindow->widget());
+        return qobject_cast<MdiChild *>(activeSubWindow->widget());
     return nullptr;
 }
 
@@ -440,7 +439,7 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &fileName) const
 
     const QList<QMdiSubWindow *> subWindows = mdiArea->subWindowList();
     for (QMdiSubWindow *window : subWindows) {
-        MyMdiChild *mdiChild = qobject_cast<MyMdiChild *>(window->widget());
+        MdiChild *mdiChild = qobject_cast<MdiChild *>(window->widget());
         if (mdiChild->currentFile() == canonicalFilePath)
             return window;
     }

@@ -60,10 +60,7 @@ void Highlighter::updateData() {
 void Highlighter::highlightBlock(const QString &text) {
     for (ColorInfo colorInfo : highlightData[currentBlock().blockNumber()]) {
         QTextCharFormat format;
-        if (colorInfo.color == "black") format.setForeground(Qt::black);
-        if (colorInfo.color == "red") format.setForeground(Qt::red);
-        if (colorInfo.color == "blue") format.setForeground(Qt::blue);
-        if (colorInfo.color == "yellow") format.setForeground(Qt::darkYellow);
+        format.setForeground(QColor(colorInfo.color));
         setFormat(colorInfo.positionBegin, colorInfo.positionEnd - colorInfo.positionBegin + 1, format);
     }
 }

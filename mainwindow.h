@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-class MyMdiChild;
+class MdiChild;
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
@@ -37,7 +37,7 @@ private slots:
     void about();
     void updateMenus();
     void updateWindowMenu();
-    MyMdiChild *createMdiChild();
+    MdiChild *createMdiChild();
     void switchLayoutDirection();
 
 private:
@@ -51,7 +51,7 @@ private:
     static bool hasRecentFiles();
     void prependToRecentFiles(const QString &fileName);
     void setRecentFilesVisible(bool visible);
-    MyMdiChild *activeMdiChild() const;
+    MdiChild *activeMdiChild() const;
     QMdiSubWindow *findMdiChild(const QString &fileName) const;
 
     QMdiArea *mdiArea;

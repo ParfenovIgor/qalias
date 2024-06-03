@@ -9,11 +9,11 @@ QT_BEGIN_NAMESPACE
 class QTextEdit;
 QT_END_NAMESPACE
 
-class MyMdiChild : public QWidget {
+class MdiChild : public QWidget {
     Q_OBJECT
 
 public:
-    MyMdiChild(QWidget *parent = 0);
+    MdiChild(QWidget *parent = 0);
     CodeEditor *editor;
     Highlighter *highlighter;
 

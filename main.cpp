@@ -56,14 +56,14 @@
 
 int main(int argc, char *argv[])
 {
-    Q_INIT_RESOURCE(mdi);
+    Q_INIT_RESOURCE(qalias);
 
     QApplication app(argc, argv);
-    QCoreApplication::setApplicationName("MDI Example");
+    QCoreApplication::setApplicationName("QAlias");
     QCoreApplication::setOrganizationName("QtProject");
     QCoreApplication::setApplicationVersion(QT_VERSION_STR);
     QCommandLineParser parser;
-    parser.setApplicationDescription("Qt MDI Example");
+    parser.setApplicationDescription("QAlias");
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addPositionalArgument("file", "The file to open.");

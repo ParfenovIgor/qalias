@@ -1,8 +1,8 @@
 #include <QtWidgets>
 
-#include "mymdichild.h"
+#include "mdichild.h"
 
-MyMdiChild::MyMdiChild(QWidget *parent)
+MdiChild::MdiChild(QWidget *parent)
     : QWidget(parent) {
     setupEditor();
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -10,7 +10,7 @@ MyMdiChild::MyMdiChild(QWidget *parent)
     setLayout(mainLayout);
 }
 
-void MyMdiChild::newFile() {
+void MdiChild::newFile() {
     static int sequenceNumber = 1;
 
     isUntitled = true;
@@ -18,15 +18,15 @@ void MyMdiChild::newFile() {
     setWindowTitle(curFile + "[*]");
 
     connect(editor->document(), &QTextDocument::contentsChanged,
-            this, &MyMdiChild::documentWasModified);
+            this, &MdiChild::documentWasModified);
 
     editor->clear();
 }
 
-bool MyMdiChild::loadFile(const QString &fileName) {
+bool MdiChild::loadFile(const QString &fileName) {
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("MDI"),
+        QMessageBox::warning(this, tr("QAlias"),
                              tr("Cannot read file %1:\n%2.")
                              .arg(fileName)
                              .arg(file.errorString()));
@@ -42,12 +42,12 @@ bool MyMdiChild::loadFile(const QString &fileName) {
     setCurrentFile(fileName);
 
     connect(editor->document(), &QTextDocument::contentsChanged,
-            this, &MyMdiChild::documentWasModified);
+            this, &MdiChild::documentWasModified);
 
     return true;
 }
 
-bool MyMdiChild::save()
+bool MdiChild::save()
 {
     if (isUntitled) {
         return saveAs();
@@ -56,7 +56,7 @@ bool MyMdiChild::save()
     }
 }
 
-bool MyMdiChild::saveAs()
+bool MdiChild::saveAs()
 {
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save As"),
                                                     curFile);
@@ -66,7 +66,7 @@ bool MyMdiChild::saveAs()
     return saveFile(fileName);
 }
 
-bool MyMdiChild::saveFile(const QString &fileName)
+bool MdiChild::saveFile(const QString &fileName)
 {
     QString errorMessage;
 
@@ -86,7 +86,7 @@ bool MyMdiChild::saveFile(const QString &fileName)
     QGuiApplication::restoreOverrideCursor();
 
     if (!errorMessage.isEmpty()) {
-        QMessageBox::warning(this, tr("MDI"), errorMessage);
+        QMessageBox::warning(this, tr("QAlias"), errorMessage);
         return false;
     }
 
@@ -94,12 +94,12 @@ bool MyMdiChild::saveFile(const QString &fileName)
     return true;
 }
 
-QString MyMdiChild::userFriendlyCurrentFile()
+QString MdiChild::userFriendlyCurrentFile()
 {
     return strippedName(curFile);
 }
 
-void MyMdiChild::closeEvent(QCloseEvent *event)
+void MdiChild::closeEvent(QCloseEvent *event)
 {
     if (maybeSave()) {
         event->accept();
@@ -108,17 +108,17 @@ void MyMdiChild::closeEvent(QCloseEvent *event)
     }
 }
 
-void MyMdiChild::documentWasModified()
+void MdiChild::documentWasModified()
 {
     setWindowModified(editor->document()->isModified());
 }
 
-bool MyMdiChild::maybeSave()
+bool MdiChild::maybeSave()
 {
     if (!editor->document()->isModified())
         return true;
     const QMessageBox::StandardButton ret
-            = QMessageBox::warning(this, tr("MDI"),
+            = QMessageBox::warning(this, tr("QAlias"),
                                    tr("'%1' has been modified.\n"
                                       "Do you want to save your changes?")
                                    .arg(userFriendlyCurrentFile()),
@@ -135,7 +135,7 @@ bool MyMdiChild::maybeSave()
     return true;
 }
 
-void MyMdiChild::setCurrentFile(const QString &fileName)
+void MdiChild::setCurrentFile(const QString &fileName)
 {
     curFile = QFileInfo(fileName).canonicalFilePath();
     isUntitled = false;
@@ -144,12 +144,12 @@ void MyMdiChild::setCurrentFile(const QString &fileName)
     setWindowTitle(userFriendlyCurrentFile() + "[*]");
 }
 
-QString MyMdiChild::strippedName(const QString &fullFileName)
+QString MdiChild::strippedName(const QString &fullFileName)
 {
     return QFileInfo(fullFileName).fileName();
 }
 
-void MyMdiChild::setupEditor()
+void MdiChild::setupEditor()
 {
     QFont font;
     font.setFamily("Courier");
