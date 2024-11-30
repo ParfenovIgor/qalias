@@ -28,6 +28,10 @@ public:
 protected:
     void closeEvent(QCloseEvent *event) override;
 
+public slots:
+    void saveOnUpdate();
+    void displayMessage(QString message);
+
 private slots:
     void documentWasModified();
 
@@ -38,6 +42,7 @@ private:
     void setCurrentFile(const QString &fileName);
     QString strippedName(const QString &fullFileName);
 
+    QWidget *messageBox;
     QString curFile;
     bool isUntitled;
 };

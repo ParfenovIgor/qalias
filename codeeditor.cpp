@@ -119,4 +119,5 @@ void CodeEditor::keyPressEvent(QKeyEvent *event) {
     else {
         QPlainTextEdit::keyPressEvent(event);
     }
+    contentsChanged();
 }

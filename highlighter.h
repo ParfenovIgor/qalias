@@ -35,10 +35,16 @@ public:
 protected:
     void highlightBlock(const QString &text) override;
 
+signals:
+    void displayError(QString error);
+
 private:
-    QNetworkAccessManager *manager;
+    QNetworkAccessManager *managerHighlight;
+    QNetworkAccessManager *managerCheckerrors;
 
     QString lastText;
     QMap <int, QList <ColorInfo>> highlightData;
-    void replyFinished(QNetworkReply *reply);
+    QMap <int, QList <ColorInfo>> errorData;
+    void replyFinishedHighlight(QNetworkReply *reply);
+    void replyFinishedCheckerrors(QNetworkReply *reply);
 };

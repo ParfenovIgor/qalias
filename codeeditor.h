@@ -22,6 +22,9 @@ private slots:
     void highlightCurrentLine();
     void updateLineNumberArea(const QRect &rect, int dy);
 
+signals:
+    void contentsChanged();
+
 private:
     QWidget *lineNumberArea;
 };

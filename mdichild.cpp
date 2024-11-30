@@ -36,7 +36,6 @@ bool MdiChild::loadFile(const QString &fileName) {
     QTextStream in(&file);
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     editor->setPlainText(in.readAll());
-    highlighter->filename = fileName;
     QGuiApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
@@ -108,6 +107,30 @@ void MdiChild::closeEvent(QCloseEvent *event)
     }
 }
 
+void MdiChild::saveOnUpdate() {
+    save();
+}
+
+void MdiChild::displayMessage(QString message) {
+    if (message.isEmpty()) {
+        messageBox->hide();
+        return;
+    }
+
+    QLabel *messageLabel = messageBox->findChild<QLabel*>();
+    if (messageLabel) {
+        messageLabel->setText(message);
+    }
+
+    QTextCursor cursor = editor->textCursor();
+    QRect rect = editor->cursorRect(cursor);
+    QPoint pos = editor->mapToGlobal(rect.bottomLeft());
+
+    messageBox->move(pos.x(), pos.y());
+    messageBox->adjustSize();
+    messageBox->show();
+}
+
 void MdiChild::documentWasModified()
 {
     setWindowModified(editor->document()->isModified());
@@ -140,6 +163,7 @@ void MdiChild::setCurrentFile(const QString &fileName)
     curFile = QFileInfo(fileName).canonicalFilePath();
     isUntitled = false;
     editor->document()->setModified(false);
+    highlighter->filename = fileName;
     setWindowModified(false);
     setWindowTitle(userFriendlyCurrentFile() + "[*]");
 }
@@ -154,19 +178,22 @@ void MdiChild::setupEditor()
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
-    font.setPointSize(12);
+    font.setPointSize(18);
 
     editor = new CodeEditor;
     editor->setFont(font);
 
     highlighter = new Highlighter(editor->document());
+    connect(editor, &CodeEditor::contentsChanged, highlighter, &Highlighter::updateData);
+    connect(editor, &CodeEditor::contentsChanged, this, &MdiChild::saveOnUpdate);
 
-    QFile file("1.al");
-    if (file.open(QFile::ReadOnly | QFile::Text)) {
-        editor->setPlainText(file.readAll());
-        highlighter->filename = "1.al";
-    }
-
-    connect(editor, &QPlainTextEdit::textChanged, highlighter, &Highlighter::updateData);
+    messageBox = new QWidget(this);
+    messageBox->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint);
+    messageBox->setStyleSheet("background-color: lightyellow; border: 1px solid gray;");
+    QLabel *messageLabel = new QLabel("", messageBox);
+    QVBoxLayout *boxLayout = new QVBoxLayout(messageBox);
+    boxLayout->addWidget(messageLabel);
+    messageBox->setLayout(boxLayout);
+    messageBox->hide();
+    connect(highlighter, &Highlighter::displayError, this, &MdiChild::displayMessage);
 }
-
