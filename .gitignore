@@ -1,5 +1,8 @@
 *.o
+/.qmake.cache
+/.qmake.stash
 moc_*.cpp
 moc_*.h
 qrc_*.cpp
+Makefile*
 qalias

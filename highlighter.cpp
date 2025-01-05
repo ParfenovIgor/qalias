@@ -18,7 +18,7 @@ Highlighter::Highlighter(QTextDocument *parent)
 
 void Highlighter::replyFinishedHighlight(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError) {
-        qWarning() << "QNetworkReply error: " << reply->errorString();
+        // qWarning() << "QNetworkReply error: " << reply->errorString();
         return;
     }
     highlightData.clear();
@@ -28,7 +28,7 @@ void Highlighter::replyFinishedHighlight(QNetworkReply *reply) {
     QJsonParseError parseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(answer.toUtf8(), &parseError);
     if(parseError.error != QJsonParseError::NoError){
-        qWarning() << "Parse error at " << parseError.offset << ":" << parseError.errorString();
+        // qWarning() << "Parse error at " << parseError.offset << ":" << parseError.errorString();
         return;
     }
     QJsonArray jsonArray = jsonDoc.array();
@@ -55,7 +55,7 @@ void Highlighter::replyFinishedHighlight(QNetworkReply *reply) {
 
 void Highlighter::replyFinishedCheckerrors(QNetworkReply *reply) {
     if (reply->error() != QNetworkReply::NoError) {
-        qWarning() << "QNetworkReply error: " << reply->errorString();
+        // qWarning() << "QNetworkReply error: " << reply->errorString();
         return;
     }
     errorData.clear();
@@ -65,7 +65,7 @@ void Highlighter::replyFinishedCheckerrors(QNetworkReply *reply) {
     QJsonParseError parseError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(answer.toUtf8(), &parseError);
     if(parseError.error != QJsonParseError::NoError){
-        qWarning() << "Parse error at " << parseError.offset << ":" << parseError.errorString();
+        // qWarning() << "Parse error at " << parseError.offset << ":" << parseError.errorString();
         return;
     }
     QJsonObject jsonObj = jsonDoc.object();
@@ -104,23 +104,30 @@ void Highlighter::replyFinishedCheckerrors(QNetworkReply *reply) {
 void Highlighter::updateData() {
     if (document()->toPlainText() == lastText) return;
     lastText = document()->toPlainText();
+
+    QString port = "12913";
     
     {
-        QUrl url("http://127.0.0.1:12913/highlight");
+        QUrl url("http://127.0.0.1:" + port + "/highlight");
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
         managerHighlight->post(QNetworkRequest(request), document()->toPlainText().toUtf8());
     }
     {
-        QUrl url("http://127.0.0.1:12913/checkerrors");
+        QUrl url("http://127.0.0.1:" + port + "/checkerrors");
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
         QString buffer = "calias -v " + filename;
+        QString altlib_directory = qgetenv("ALTLIB");
+        if (!altlib_directory.isEmpty()) {
+            buffer += " -i altlib " + altlib_directory + "/include/";
+        }
         managerCheckerrors->post(QNetworkRequest(request), buffer.toUtf8());
     }
 }
 
 void Highlighter::highlightBlock(const QString &text) {
+    QString str = text;
     for (ColorInfo colorInfo : highlightData[currentBlock().blockNumber()]) {
         QTextCharFormat format;
         format.setForeground(QColor(colorInfo.color));

@@ -7,6 +7,7 @@ MdiChild::MdiChild(QWidget *parent)
     setupEditor();
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(editor);
+    mainLayout->addWidget(messageBox);
     setLayout(mainLayout);
 }
 
@@ -112,23 +113,10 @@ void MdiChild::saveOnUpdate() {
 }
 
 void MdiChild::displayMessage(QString message) {
-    if (message.isEmpty()) {
-        messageBox->hide();
-        return;
-    }
-
     QLabel *messageLabel = messageBox->findChild<QLabel*>();
     if (messageLabel) {
-        messageLabel->setText(message);
+        messageLabel->setText(message.trimmed());
     }
-
-    QTextCursor cursor = editor->textCursor();
-    QRect rect = editor->cursorRect(cursor);
-    QPoint pos = editor->mapToGlobal(rect.bottomLeft());
-
-    messageBox->move(pos.x(), pos.y());
-    messageBox->adjustSize();
-    messageBox->show();
 }
 
 void MdiChild::documentWasModified()
@@ -188,12 +176,9 @@ void MdiChild::setupEditor()
     connect(editor, &CodeEditor::contentsChanged, this, &MdiChild::saveOnUpdate);
 
     messageBox = new QWidget(this);
-    messageBox->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint);
-    messageBox->setStyleSheet("background-color: lightyellow; border: 1px solid gray;");
     QLabel *messageLabel = new QLabel("", messageBox);
     QVBoxLayout *boxLayout = new QVBoxLayout(messageBox);
     boxLayout->addWidget(messageLabel);
     messageBox->setLayout(boxLayout);
-    messageBox->hide();
     connect(highlighter, &Highlighter::displayError, this, &MdiChild::displayMessage);
 }
