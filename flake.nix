@@ -46,7 +46,12 @@
       in
       {
         inherit packages;
-        devShells.default = pkgs.mkShell { buildInputs = [ packages.qalias ]; };
+        devShells.default = pkgs.mkShell {
+          buildInputs = [ packages.qalias ];
+          shellHook = ''
+            export QT_DEBUG_PLUGINS=1
+          '';
+        };
       }
     );
 }
