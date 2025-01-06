@@ -32,7 +32,11 @@
                 ./qalias.qrc
               ];
             };
-            buildInputs = [ pkgs.libsForQt5.full ];
+            buildInputs = [
+              pkgs.libsForQt5.full
+              # https://nixos.wiki/wiki/Qt#qt.qpa.plugin:_Could_not_find_the_Qt_platform_plugin_.22xcb.22_in_.22.22
+              pkgs.libsForQt5.qt5.wrapQtAppsHook
+            ];
             buildPhase = ''
               qmake
               make
@@ -46,12 +50,7 @@
       in
       {
         inherit packages;
-        devShells.default = pkgs.mkShell {
-          buildInputs = [ packages.qalias ];
-          shellHook = ''
-            export QT_DEBUG_PLUGINS=1
-          '';
-        };
+        devShells.default = pkgs.mkShell { buildInputs = [ packages.qalias ]; };
       }
     );
 }
